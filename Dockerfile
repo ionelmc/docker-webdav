@@ -8,6 +8,8 @@ RUN       apt-get update && \
 COPY      set_htpasswd.sh /set_htpasswd.sh
 COPY      webdav-site.conf /etc/nginx/sites-enabled/
 RUN       rm /etc/nginx/sites-enabled/default
+# Overwrite mimetypes to add rss format.
+COPY      mime.types /etc/nginx/
 
 # forward request and error logs to docker log collector
 RUN       ln -sf /dev/stdout /var/log/nginx/access.log
