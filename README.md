@@ -10,5 +10,5 @@ If either environment variable is missing, basic authentication is removed.
 
 Basic usage:
 
-	docker run -d --name webdav -p 80:80 -v $PWD:/var/www visity/webdav
+	docker run -d --name webdav -p 80:80 -v "$PWD":/var/www visity/webdav
 	
