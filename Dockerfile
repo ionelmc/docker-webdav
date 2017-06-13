@@ -1,26 +1,17 @@
-# Do not use nginx as base since extras are not included.
-FROM      debian:jessie
+FROM ubuntu:xenial-20170410
 
-RUN       apt-get update && \
-          apt-get install -y nginx nginx-extras && \
-          rm -rf /var/lib/apt/lists/*
-    
-COPY      set_htpasswd.sh /set_htpasswd.sh
-COPY      webdav-site.conf /etc/nginx/sites-enabled/
-RUN       rm /etc/nginx/sites-enabled/default
-# Overwrite mimetypes to add rss format.
-COPY      mime.types /etc/nginx/
+ARG http_proxy
+ARG https_proxy
+RUN apt-get update \
+ && apt-get install -yq --no-install-recommends nginx-extras gosu \
+ && rm -rf /var/lib/apt/lists/*
 
-# forward request and error logs to docker log collector
-RUN       ln -sf /dev/stdout /var/log/nginx/access.log
-RUN       ln -sf /dev/stderr /var/log/nginx/error.log
+RUN ln -sf /dev/stderr /var/log/nginx/error.log
+RUN chmod go+rwX -R /var /run
+VOLUME /media
 
-# Create folder where webdav files end up.
-RUN       mkdir -p /var/www/.temp
-RUN       chown -R www-data:www-data /var/www
-RUN       chmod -R a+rw /var/www
+COPY entrypoint.sh /
+COPY nginx.conf /etc/nginx/
 
-# Share the volume with the files to other dockers
-VOLUME    /var/www
-
-CMD       /set_htpasswd.sh && nginx -g "daemon off;" 
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
