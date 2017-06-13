@@ -7,9 +7,12 @@ else
     sed -i 's%auth_basic "Restricted";% %g' /etc/nginx/nginx.conf
     sed -i 's%auth_basic_user_file webdavpasswd;% %g' /etc/nginx/nginx.conf
 fi
+
 if [ -n "${UID:-}" ]; then
     chmod go+w /dev/stderr /dev/stdout
+    gosu $UID mkdir -p /media/.tmp
     exec gosu $UID "$@"
 else
+    mkdir -p /media/.tmp
     exec "$@"
 fi
