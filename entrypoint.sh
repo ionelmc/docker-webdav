@@ -1,7 +1,7 @@
 #!/bin/sh -eux
 
 if [ -n "${WEBDAV_USERNAME:-}" ] && [ -n "${WEBDAV_PASSWORD:-}" ]; then
-    htpasswd -c /etc/nginx/webdavpasswd $WEBDAV_USERNAME $WEBDAV_PASSWORD
+    htpasswd -cb /etc/nginx/webdavpasswd $WEBDAV_USERNAME $WEBDAV_PASSWORD
 else
     echo "No htpasswd config done"
     sed -i 's%auth_basic "Restricted";% %g' /etc/nginx/nginx.conf
